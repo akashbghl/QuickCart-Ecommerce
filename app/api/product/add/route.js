@@ -33,7 +33,7 @@ export async function POST(request){
         const files = formData.getAll('images')
 
         if(!files || files.length === 0){
-            NextResponse.json({success: false, message: 'No files found'})
+           return NextResponse.json({success: false, message: 'Please Add Product Image'})
         }
 
         const result = await Promise.all(

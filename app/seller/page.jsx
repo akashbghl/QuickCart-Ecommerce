@@ -15,9 +15,11 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Earphone');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [loading,setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true)
     const formData = new FormData()
     formData.append('name',name)
     formData.append('description',description)
@@ -32,6 +34,7 @@ const AddProduct = () => {
       const token = await getToken()
       const{data} = await axios.post('/api/product/add',formData,{headers:{Authorization: `bearer ${token}`}})
       if(data.success){
+        setLoading(false)
         toast.success(data.message)
         setFiles([]),
         setCategory('Earphone'),
@@ -41,15 +44,18 @@ const AddProduct = () => {
         setOfferPrice('')
       }else{
         toast.error(data.message)
+        setLoading(false)
       }
     } catch (error) {
       toast.error(error.message)
+      setLoading(false)
     }
   };
 
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
+      {loading && <p className="text-center text-2xl text-orange-500">Uploading ...</p>}
         <div>
           <p className="text-base font-medium">Product Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -64,7 +70,7 @@ const AddProduct = () => {
                 <Image
                   key={index}
                   className="max-w-24 cursor-pointer"
-                  src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
+                  src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area } 
                   alt=""
                   width={100}
                   height={100}
